@@ -41,3 +41,4 @@ target
 credentials
 **/p
 **/u
+!/exJars/tidal_api-1.0-SNAPSHOT.jar
