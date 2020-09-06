@@ -10,6 +10,7 @@ import com.cjacob314.apps.persistence.IniManager;
 import com.cjacob314.apps.utils.Logger;
 import com.cjacob314.apps.utils.SystemInfo;
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import com.cjacob314.apps.scenes.*;
 import javafx.util.Pair;
@@ -34,12 +35,13 @@ public class App extends Application {
         var javaVersion = SystemInfo.javaVersion();
         Logger.logInfo(Constants.mainAppName + " running on Java " + javaVersion);
 
-        stage.setTitle(Constants.mainWindowName);
+        stage.setTitle(Constants.mainWindowName + " v" + Constants.mainAppVersion);
         stage.setScene(DefaultScene.getMain());
+        stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("images/icon.png")));
         stage.show();
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         startTime = LocalDateTime.now();
         IniManager.loadIni();
         launch(args);

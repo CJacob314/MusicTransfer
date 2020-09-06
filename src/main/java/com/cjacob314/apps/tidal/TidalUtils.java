@@ -6,6 +6,8 @@
 package com.cjacob314.apps.tidal;
 
 import com.cjacob314.apps.persistence.CredSaver;
+import com.cjacob314.apps.scenes.DefaultScene;
+import com.cjacob314.apps.scenes.TrackTreeObj;
 import com.cjacob314.apps.utils.HttpUtils;
 import com.cjacob314.apps.persistence.IniManager;
 import com.cjacob314.apps.utils.Logger;
@@ -57,7 +59,7 @@ public class TidalUtils {
         BufferedInputStream bis = new BufferedInputStream(url.openStream());
         FileOutputStream fis = new FileOutputStream(file);
         byte[] buffer = new byte[1024];
-        int count=0;
+        int count;
         while((count = bis.read(buffer,0,1024)) != -1)
         {
             fis.write(buffer, 0, count);
@@ -74,24 +76,24 @@ public class TidalUtils {
     public static String formArtistString(List<Object> artists){
         // yeah...
 
-        String str = "";
+        StringBuilder strb = new StringBuilder(); // using this because str concat in loop bad or something (https://rules.sonarsource.com/java/RSPEC-1643)
         int sz = artists.size();
         if(sz > 0)
-            str += artistNameFromObject(artists.get(0));
+            strb.append(artistNameFromObject(artists.get(0)));
         if(sz > 2)
             for(int i = 0; i < sz - 1; i++)
-                str += ", " + artistNameFromObject(artists.get(i));
+                strb.append(", ").append(artistNameFromObject(artists.get(i)));
 
-        str += " & " + artistNameFromObject(artists.get(sz - 1));
+        strb.append(" & ").append(artistNameFromObject(artists.get(sz - 1)));
 
-        return str;
+        return strb.toString();
     }
 
     public static void download(Track track){
         String url = HttpUtils.getTidalTrackHifiOfflineUrl(track);
         try {
             // Apparently + str concat gets compiled to StringBuilder, which is a lot faster than my String.format old way...
-            downloadUsingStream(url, SystemInfo.exeDirPath() + "\\" + track.getTitle() + " - " + formArtistString(track.getArtists()) + ".m4a");
+            downloadUsingStream(url, SystemInfo.exeDirPath() + "\\" + track.getTitle() + " - " + formArtistString(track.getArtists()) + ".flac");
         } catch (IOException e) {
             Logger.logException(e);
         }
@@ -102,7 +104,7 @@ public class TidalUtils {
 
         JFXAlert<Pair<String, String>> alert = new JFXAlert<>();
         alert.setSize(325, 180);
-        Double fieldWidth = 200d;
+        double fieldWidth = 200d;
         JFXPasswordField pwd = new JFXPasswordField();
         JFXTextField username = new JFXTextField();
         pwd.setPrefWidth(fieldWidth);
@@ -166,12 +168,27 @@ public class TidalUtils {
 
             List<Playlist> userPlaylists = api.getUserPlaylists();
             Logger.logInfo("Your first playlist is titled: " + userPlaylists.get(0).getTitle());
+            /*
             Logger.logInfo("Let's try to download a song! (Will add ability to choose later ;)");
-            testDownload();
+            //testDownload();
+
+            DefaultScene.tracks.add(new TrackTreeObj(api.searchTrack("Shoot Sideways").get(0)));
+            DefaultScene.tracks.add(new TrackTreeObj(api.searchTrack("Ooh La La").get(0)));
+            DefaultScene.tracks.add(new TrackTreeObj(api.searchTrack("Gangsta's Paradise").get(0)));
+             */
         }
     }
 
     public static Map<String,String> getSessionParams() {
         return api.getSessionParams();
+    }
+
+    public static List<Track> searchTrackAndGetList(String searchStr) {
+        if(api.getSession() == null){
+            Logger.logError("TIDAL session has not yet been created! Use GUI and input username & password then try again.");
+            return null;
+        }
+
+        return api.searchTrack(searchStr);
     }
 }

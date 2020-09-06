@@ -13,6 +13,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import javafx.util.Pair;
 
 import java.util.Map;
 
@@ -30,9 +31,20 @@ public class HttpUtils {
         return getHTTP("https://api.tidal.com/v1/tracks/" + track.getId().toString() + "/streamUrl", pParams).getBody().getObject().getString("url");
     }
 
+    public static Pair<String,String> getTrackHifiOfflineAndCoverUrls(Track track){
+        Logger.logError("This has yet to be implemented... returning null...");
+        return null;
+    }
+
+    public static String getTrackCoverUrl(Track track) {
+        // split to be easier to read...
+        String coverId = getHTTP("https://api.tidal.com/v1/tracks/" + track.getId().toString(), TidalUtils.getSessionParams()).getBody().getObject().getJSONObject("album").getString("cover").replace('-', '/');
+        return "https://resources.tidal.com/images/" + coverId + "/750x750.jpg";
+    }
+
     public static HttpResponse<JsonNode> getHTTP(String url, Map<String,String> params){
         GetRequest req = Unirest.get(url);
-        params.forEach((k, v) -> req.queryString(k, v));
+        params.forEach(req::queryString);
         try {
             //Logger.logInfo("JSON IS: " + req.asJson().getBody().getObject().toString());
             return req.asJson();
