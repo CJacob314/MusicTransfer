@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.cjacob314.apps</groupId>
     <artifactId>MusicTransfer</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1.5-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
@@ -33,10 +33,12 @@
         <!-- This was created by HieronimB on github(https://github.com/HieronimB/tidalapi). It's great, but did not work for me, or at all anymore. So I have made some changes and recompiled :P -->
         <dependency>
             <groupId>com.hadas.krzysztof</groupId>
-            <artifactId>tidal_api</artifactId>
+            <artifactId>tidal-api</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <!-- removed for shading... used mvn install cmd
             <scope>system</scope>
             <systemPath>${project.basedir}/exJars/tidal_api-1.0-SNAPSHOT.jar</systemPath>
+            -->
         </dependency>
 
         <dependency>
@@ -58,6 +60,13 @@
             <version>9.0.10</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.2.4</version>
+            <type>maven-plugin</type>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -68,6 +77,33 @@
                 <configuration>
                     <release>11</release>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <configuration>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <mainClass>com.cjacob314.apps.AppMain</mainClass>
+                        </transformer>
+                    </transformers>
+                    <artifactSet>
+                        <!-- seems to whitelist
+                        <includes>
+                            <include>com/hadas/krzysztof/**</include>
+                        </includes>
+                        -->
+                    </artifactSet>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.openjfx</groupId>

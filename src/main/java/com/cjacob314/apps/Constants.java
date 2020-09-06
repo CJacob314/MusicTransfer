@@ -12,6 +12,7 @@ import com.cjacob314.apps.utils.TextEncryptor;
  * @author Jacob Cohen <jcohen30@uic.edu> or <jacob@jacobcohen.info>
  */
 public class Constants {
+    public static final String mainAppVersion = "0.1.5-SNAPSHOT";
     public static final String mainWindowName = "Jacob's Music Transfer";
     public static final String mainAppName = "JacobMusicTransfer";
     public static final byte[] encryptPass = TextEncryptor.hexStringToByteArray("6a256f574061657026495e435761244636786a5162656e4e");
@@ -20,7 +21,7 @@ public class Constants {
     public static final String logEFilePrefix = "JMT-err--";
     public static final String logIFilePrefix = "JMT-info--";
     public static final String logFileExt = ".log";
-    public static final String logIPrefix = "INFO ";
+    public static final String logIPrefix = "INFO  ";
     public static final String logEPrefix = "ERROR ";
     public static boolean logCallingClasses = true;
     public static final String logDirNextToExe = "JMT-logs";

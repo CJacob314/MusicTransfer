@@ -3,15 +3,14 @@
  * Proprietary and confidential
  * Written by Jacob Cohen <jcohen30@uic.edu> or <jacob@jacobcohen.info>
  */
-package com.cjacob314.apps.persistence;
+package com.cjacob314.apps;
 
 /**
- * Class for the default .ini values
+ * Literally just a small wrapper for main which does not extend javafx's Application
  * @author Jacob Cohen <jcohen30@uic.edu> or <jacob@jacobcohen.info>
  */
-public class IniDefaults {
-    // Window Settings [window]
-    public static final double windowWidth = 1100d;
-    public static final double windowHeight = 480d;
-    public static final String windowRipplerColor = "#a521d1";
+public class AppMain {
+    public static void main(final String[] args){
+        App.main(args);
+    }
 }
