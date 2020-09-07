@@ -5,7 +5,7 @@
  */
 package com.cjacob314.apps.tidal;
 
-import com.cjacob314.apps.utils.Logger;
+import com.cjacob314.apps.utils.logging.Logger;
 import com.hadas.krzysztof.TidalApi;
 import com.hadas.krzysztof.favorites.Favorites;
 import com.hadas.krzysztof.items.Items;
@@ -36,7 +36,7 @@ public class TidalApiImplCustom implements TidalApi {
         }
 
         // Tried with Map.of(), but forgot that it returns an immutable object...
-        return new HashMap<String,String>(){{
+        return new HashMap<>(){{
             put("sessionId", session.getSessionId());
             put("countryCode", session.getCountryCode());
             put("limit", "1000"); // SFMS

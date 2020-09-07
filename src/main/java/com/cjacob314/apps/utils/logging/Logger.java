@@ -3,10 +3,12 @@
  * Proprietary and confidential
  * Written by Jacob Cohen <jcohen30@uic.edu> or <jacob@jacobcohen.info>
  */
-package com.cjacob314.apps.utils;
+package com.cjacob314.apps.utils.logging;
 
 import com.cjacob314.apps.App;
 import com.cjacob314.apps.Constants;
+import com.cjacob314.apps.persistence.IniManager;
+import com.cjacob314.apps.utils.SystemInfo;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,10 +43,12 @@ public class Logger {
     }
 
     public static void logInfo(String info){
-        String toPrint = Constants.logIPrefix + (Constants.logCallingClasses ? "[" + new Exception().getStackTrace()[1].getClassName() + "] " : "") + info;
+        String toPrint = Constants.logIPrefix + (IniManager.debugLogClassNames ? "[" + new Exception().getStackTrace()[1].getClassName() + "] " : "") + info;
         System.out.println(toPrint);
         try {
-            allOuts.write(((firstLine ? "" : System.lineSeparator()) + toPrint).getBytes());
+            String finalPrint = (firstLine ? "" : System.lineSeparator()) + toPrint;
+            allOuts.write(finalPrint.getBytes());
+            InAppLogView.write(finalPrint);
             // add just the info files too
         } catch (IOException e) {
             e.printStackTrace(); // okay these ones too lol
@@ -54,10 +58,12 @@ public class Logger {
     }
 
     public static void logError(String error){
-        String toPrint = Constants.logEPrefix + (Constants.logCallingClasses ? "[" + new Exception().getStackTrace()[1].getClassName() + "] " : "") + error;
+        String toPrint = Constants.logEPrefix + (IniManager.debugLogClassNames ? "[" + new Exception().getStackTrace()[1].getClassName() + "] " : "") + error;
         System.err.println(toPrint);
         try {
-            allOuts.write(((firstLine ? "" : System.lineSeparator()) + toPrint).getBytes());
+            String finalPrint = (firstLine ? "" : System.lineSeparator()) + toPrint;
+            allOuts.write(finalPrint.getBytes());
+            InAppLogView.write(finalPrint);
             // add just the error files too
         } catch (IOException e) {
             e.printStackTrace(); // yup this should be the last...
@@ -70,7 +76,9 @@ public class Logger {
         String toOut = Constants.logEPrefix + "caught exception: " + e.toString();
         System.err.println(toOut);
         try {
-            allOuts.write(((firstLine ? "" : System.lineSeparator()) + toOut).getBytes());
+            String finalToOut = (firstLine ? "" : System.lineSeparator()) + toOut;
+            allOuts.write(finalToOut.getBytes());
+            InAppLogView.write(finalToOut);
             // add just the error files too
         } catch (IOException ioe) {
             ioe.printStackTrace(); // haha

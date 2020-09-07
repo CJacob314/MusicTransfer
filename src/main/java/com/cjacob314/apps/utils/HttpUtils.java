@@ -7,6 +7,7 @@ package com.cjacob314.apps.utils;
 
 import com.cjacob314.apps.Constants;
 import com.cjacob314.apps.tidal.TidalUtils;
+import com.cjacob314.apps.utils.logging.Logger;
 import com.mashape.unirest.request.GetRequest;
 import com.hadas.krzysztof.models.Track;
 import com.mashape.unirest.http.HttpResponse;

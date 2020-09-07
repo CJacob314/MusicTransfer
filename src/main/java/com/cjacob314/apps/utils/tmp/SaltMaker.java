@@ -5,7 +5,7 @@
  */
 package com.cjacob314.apps.utils.tmp;
 
-import com.cjacob314.apps.utils.Logger;
+import com.cjacob314.apps.utils.logging.Logger;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;

@@ -7,10 +7,10 @@ package com.cjacob314.apps.tidal;
 
 import com.cjacob314.apps.persistence.CredSaver;
 import com.cjacob314.apps.scenes.DefaultScene;
-import com.cjacob314.apps.scenes.TrackTreeObj;
+import com.cjacob314.apps.utils.ColorUtils;
 import com.cjacob314.apps.utils.HttpUtils;
 import com.cjacob314.apps.persistence.IniManager;
-import com.cjacob314.apps.utils.Logger;
+import com.cjacob314.apps.utils.logging.Logger;
 import com.cjacob314.apps.utils.SystemInfo;
 import com.hadas.krzysztof.models.Playlist;
 import com.hadas.krzysztof.models.Track;
@@ -18,23 +18,23 @@ import com.jfoenix.controls.*;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Paint;
+import javafx.stage.Stage;
 import javafx.util.Pair;
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * A class of custom utils for Tidal... Should really be a package with multiple classes...
  * @author Jacob Cohen <jcohen30@uic.edu> or <jacob@jacobcohen.info>
  */
 public class TidalUtils {
-    private static TidalApiImplCustom api;
+    private static final TidalApiImplCustom api;
 
     static{
         api = new TidalApiImplCustom();
@@ -90,6 +90,7 @@ public class TidalUtils {
     }
 
     public static void download(Track track){
+        Logger.logInfo("Downloading track id: " + track.getId().toString());
         String url = HttpUtils.getTidalTrackHifiOfflineUrl(track);
         try {
             // Apparently + str concat gets compiled to StringBuilder, which is a lot faster than my String.format old way...
@@ -99,10 +100,12 @@ public class TidalUtils {
         }
     }
 
-    public static void testConnect(ActionEvent actionEvent) {
+    public static void initTidalConn(ActionEvent actionEvent) {
         // Really need to move to the fxml things smh...
 
         JFXAlert<Pair<String, String>> alert = new JFXAlert<>();
+        alert.setResult(null);
+        alert.setTitle("Tidal Login");
         alert.setSize(325, 180);
         double fieldWidth = 200d;
         JFXPasswordField pwd = new JFXPasswordField();
@@ -116,10 +119,12 @@ public class TidalUtils {
         pane.setPadding(new Insets(5, 5, 5, 5));
         HBox hBox = new HBox();
         JFXButton submitBtn = new JFXButton("Submit");
-        submitBtn.setRipplerFill(IniManager.windowRipplerColor);
+        submitBtn.setRipplerFill(Paint.valueOf(IniManager.windowThemeColor));
         submitBtn.setButtonType(JFXButton.ButtonType.RAISED);
         //submitBtn.setDefaultButton(true); // I think just close down below. It seems to auto choose this btn when pressing exit as well...
         JFXCheckBox savePCheck = new JFXCheckBox("Save password");
+        savePCheck.setCheckedColor(Paint.valueOf(IniManager.windowThemeColor));
+        savePCheck.setUnCheckedColor(Paint.valueOf(ColorUtils.darkenColorStr(IniManager.windowThemeColor, 0.3d)));
         if(CredSaver.isDataSaved()){
             Optional<Pair<String,String>> pairOp = CredSaver.getSaved();
             if(pairOp.isPresent()){
@@ -155,27 +160,34 @@ public class TidalUtils {
         pane.setTop(vBox);
 
         JFXDialogLayout content = new JFXDialogLayout();
-        //setHeading?
 
         content.setBody(pane);
         alert.setContent(content);
+        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(TidalUtils.class.getClassLoader().getResourceAsStream("images/icon.png")));
+
+        //alert.setOnCloseRequest(closeEvent -> alert.setResult(Optional.empty())); // event is NOT only called from exit button. will do at start
 
         Optional<Pair<String, String>> resultOp = alert.showAndWait();
 
         if (resultOp.isPresent()) {
-            Pair<String, String> result = resultOp.get();
+            /* The following code is a really annoying workaround D: */
+            Object resultObj = resultOp.get();
+            if(!(resultObj instanceof Pair)) return; // it will be a ButtonType. thanks jfx...
+            Pair<String, String> result = (Pair<String, String>) resultObj;
+
+            if(result.getKey().isBlank() || result.getValue().isBlank()) return;
             api.login(result.getKey(), result.getValue());
 
-            List<Playlist> userPlaylists = api.getUserPlaylists();
-            Logger.logInfo("Your first playlist is titled: " + userPlaylists.get(0).getTitle());
-            /*
-            Logger.logInfo("Let's try to download a song! (Will add ability to choose later ;)");
-            //testDownload();
-
-            DefaultScene.tracks.add(new TrackTreeObj(api.searchTrack("Shoot Sideways").get(0)));
-            DefaultScene.tracks.add(new TrackTreeObj(api.searchTrack("Ooh La La").get(0)));
-            DefaultScene.tracks.add(new TrackTreeObj(api.searchTrack("Gangsta's Paradise").get(0)));
-             */
+            String sessionId = api.getSession().getSessionId();
+            if(sessionId != null && !sessionId.isBlank()){
+                Logger.logInfo("You have successfully logged in!");
+                DefaultScene.enableTidalFunc();
+                List<Playlist> userPlaylists = api.getUserPlaylists();
+                Logger.logInfo("Here's a random one of your playlists' name: " + userPlaylists.get(new Random().nextInt(userPlaylists.size())).getTitle());
+            }
+            else{
+                Logger.logError("The login was unsuccessful :(");
+            }
         }
     }
 

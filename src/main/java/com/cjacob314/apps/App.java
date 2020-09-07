@@ -7,7 +7,8 @@ package com.cjacob314.apps;
 
 import com.cjacob314.apps.persistence.CredSaver;
 import com.cjacob314.apps.persistence.IniManager;
-import com.cjacob314.apps.utils.Logger;
+import com.cjacob314.apps.utils.logging.InAppLogView;
+import com.cjacob314.apps.utils.logging.Logger;
 import com.cjacob314.apps.utils.SystemInfo;
 import javafx.application.Application;
 import javafx.scene.image.Image;
@@ -38,6 +39,7 @@ public class App extends Application {
         stage.setTitle(Constants.mainWindowName + " v" + Constants.mainAppVersion);
         stage.setScene(DefaultScene.getMain());
         stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("images/icon.png")));
+        stage.setResizable(false);
         stage.show();
     }
 

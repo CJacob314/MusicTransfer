@@ -6,11 +6,10 @@
 package com.cjacob314.apps.persistence;
 
 import com.cjacob314.apps.Constants;
-import com.cjacob314.apps.utils.Logger;
+import com.cjacob314.apps.utils.logging.Logger;
 import com.cjacob314.apps.utils.SystemInfo;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
-import javafx.scene.paint.Paint;
 import org.ini4j.Wini;
 
 import java.io.File;
@@ -24,7 +23,8 @@ public class IniManager {
 
     public static Double windowWidth = null;
     public static Double windowHeight = null;
-    public static Paint windowRipplerColor = null;
+    public static String windowThemeColor = null;
+    public static Boolean debugLogClassNames = null;
 
     public static void loadIni() {
         // for org.ini4j.Wini
@@ -45,8 +45,12 @@ public class IniManager {
                     f.set(IniManager.class, Double.parseDouble(ini.get(splitName[0], splitName[1])));
                 }
 
-                if(f.getType() == Paint.class){
-                    f.set(IniManager.class, Paint.valueOf(ini.get(splitName[0], splitName[1])));
+                if(f.getType() == String.class){
+                    f.set(IniManager.class, ini.get(splitName[0], splitName[1]));
+                }
+
+                if(f.getType() == Boolean.class){
+                    f.set(IniManager.class, ini.get(splitName[0], splitName[1], Boolean.class));
                 }
             }
 

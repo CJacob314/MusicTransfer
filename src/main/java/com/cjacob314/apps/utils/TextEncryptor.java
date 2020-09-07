@@ -6,6 +6,7 @@
 package com.cjacob314.apps.utils;
 
 import com.cjacob314.apps.Constants;
+import com.cjacob314.apps.utils.logging.Logger;
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -52,7 +53,7 @@ public class TextEncryptor {
 
             PBEKeySpec spec = new PBEKeySpec(new String(Constants.encryptPass, StandardCharsets.UTF_8).toCharArray(), salt, 65536, 256); // maybe change i count
 
-            SecretKeySpec key = null;
+            SecretKeySpec key;
             try {
                  key = new SecretKeySpec(scf.generateSecret(spec).getEncoded(), "AES");
                  cipher.init(decryptMode ? Cipher.DECRYPT_MODE : Cipher.ENCRYPT_MODE, key);

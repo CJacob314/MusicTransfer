@@ -5,7 +5,7 @@
  */
 package com.cjacob314.apps.persistence;
 
-import com.cjacob314.apps.utils.Logger;
+import com.cjacob314.apps.utils.logging.Logger;
 import com.cjacob314.apps.utils.SystemInfo;
 import com.cjacob314.apps.utils.TextEncryptor;
 import javafx.util.Pair;
@@ -19,7 +19,7 @@ import java.util.Optional;
  */
 public class CredSaver {
 
-    static String pathToCredsDir = null;
+    static String pathToCredsDir;
 
     static{
         pathToCredsDir = SystemInfo.exeDirPath() + "\\" + "credentials"; // removed the + Constants.mainAppName
@@ -88,9 +88,11 @@ public class CredSaver {
     }
 
     public static void save(String username, String password){
+        /* removed for now
         if(isDataSaved()){
             // return; // oh lord we should check for updates good lord // save hashes to tell if different data?
         }
+         */
 
         File dir = new File(pathToCredsDir);
         dir.mkdirs(); // yes I had to do this separately...
@@ -112,6 +114,6 @@ public class CredSaver {
         byte[] userArr = fileToByteArr(userIn);
         byte[] passArr = fileToByteArr(passIn);
 
-        return Optional.of(new Pair<String,String>(TextEncryptor.decryptString(userArr), TextEncryptor.decryptString(passArr)));
+        return Optional.of(new Pair<>(TextEncryptor.decryptString(userArr), TextEncryptor.decryptString(passArr)));
     }
 }

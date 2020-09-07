@@ -12,6 +12,9 @@ package com.cjacob314.apps.persistence;
 public class IniDefaults {
     // Window Settings [window]
     public static final double windowWidth = 1100d;
-    public static final double windowHeight = 480d;
-    public static final String windowRipplerColor = "#a521d1";
+    public static final double windowHeight = 570d;
+    public static final String windowThemeColor = "#a521d1";
+
+    // Debugging Settings [debug]
+    public static final boolean debugLogClassNames = false;
 }
